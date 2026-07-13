@@ -1,0 +1,65 @@
+package com.smartims.controller;
+
+import com.smartims.dto.ApiResponse;
+import com.smartims.dto.IssueAttachmentResponse;
+import com.smartims.service.IssueAttachmentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+public class IssueAttachmentController {
+
+    private final IssueAttachmentService attachmentService;
+
+    // Upload
+    @PostMapping("/api/issues/{issueId}/attachments")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGER','ENGINEER','USER')")
+    public ApiResponse<IssueAttachmentResponse> upload(
+            @PathVariable Long issueId,
+            @RequestParam("file") MultipartFile file) {
+
+        IssueAttachmentResponse response =
+                attachmentService.upload(issueId, file);
+
+        return ApiResponse.success(
+                "Attachment uploaded successfully",
+                response
+        );
+    }
+
+    // List
+    @GetMapping("/api/issues/{issueId}/attachments")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGER','ENGINEER','USER')")
+    public ApiResponse<List<IssueAttachmentResponse>> list(
+            @PathVariable Long issueId) {
+
+        List<IssueAttachmentResponse> response =
+                attachmentService.getAttachments(issueId);
+
+        return ApiResponse.success(
+                "Issue attachments fetched successfully",
+                response
+        );
+    }
+
+    // Download
+    @GetMapping("/api/issues/attachments/{id}/download")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN','MANAGER','ENGINEER','USER')")
+    public ResponseEntity<Resource> download(@PathVariable Long id) {
+
+        Resource file = attachmentService.download(id);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + file.getFilename() + "\"")
+                .body(file);
+    }
+}
