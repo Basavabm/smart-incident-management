@@ -28,12 +28,20 @@ export default function Header() {
             <a href="#contact" className="hover:text-blue-600">Contact Us</a>
           </nav>
 
-          <Link
-            to="/login"
-            className="px-4 py-1.5 text-sm rounded-md border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition"
-          >
-            Login
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              className="px-4 py-1.5 text-sm rounded-md border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition"
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              className="px-4 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+            >
+              Register
+            </Link>
+          </div>
         </div>
       </div>
     </header>

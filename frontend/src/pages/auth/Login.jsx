@@ -19,7 +19,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // 🔐 BLOCK BACK/FORWARD TO LOGIN WHEN LOGGED IN
   useEffect(() => {
     if (token && user) {
       navigate(getDashboardPathByRole(user?.role), {
@@ -44,30 +43,23 @@ export default function Login() {
         return;
       }
 
-      // Update auth state immediately
       if (updateAuth) {
         updateAuth(data.token);
       } else {
-        // Fallback: update localStorage and trigger state update
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
-        // Trigger custom event to update auth state
         window.dispatchEvent(new CustomEvent("authUpdate", { detail: { token: data.token } }));
       }
 
-      // Determine dashboard path based on role
       const dashboardPath = getDashboardPathByRole(data.role);
 
-      // Use a small delay to ensure state is updated before navigation
-      // This ensures ProtectedRoute sees the updated auth state
       setTimeout(() => {
         if (data?.mustChangePassword) {
           navigate("/force-change-password", { replace: true });
         } else {
           navigate(dashboardPath, { replace: true });
         }
-        
-        // Show success message after navigation
+
         setTimeout(() => {
           showSuccess("Welcome to ServicePulse");
         }, 100);
@@ -93,12 +85,23 @@ export default function Login() {
           title="Welcome back"
           subtitle="Sign in to your ServicePlus account"
           footer={
-            <Link
-              to="/forgot-password"
-              className="text-blue-600 font-medium hover:underline"
-            >
-              Forgot password?
-            </Link>
+            <div className="space-y-2">
+              <Link
+                to="/forgot-password"
+                className="text-blue-600 font-medium hover:underline"
+              >
+                Forgot password?
+              </Link>
+              <p className="text-gray-700">
+                Don&apos;t have an account?{" "}
+                <Link
+                  to="/register"
+                  className="text-blue-600 font-medium hover:underline"
+                >
+                  Register
+                </Link>
+              </p>
+            </div>
           }
         >
           <form onSubmit={handleSubmit} className="space-y-4">
