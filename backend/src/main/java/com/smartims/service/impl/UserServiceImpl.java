@@ -199,7 +199,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse createUser(UserCreateRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new BadRequestException("Email already exists");
         }
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -229,7 +229,7 @@ public class UserServiceImpl implements UserService {
         if (targetRole == Role.ADMIN) {
             long existingAdminCount = userRepository.findByRoleAndCompany(Role.ADMIN, targetCompany).size();
             if (existingAdminCount > 0) {
-                throw new RuntimeException("Company \"" + targetCompany + "\" already has an admin. Only 1 admin per company is allowed.");
+                throw new BadRequestException("Company \"" + targetCompany + "\" already has an admin. Only 1 admin per company is allowed.");
             }
         }
 
