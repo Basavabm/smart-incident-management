@@ -44,3 +44,13 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+
+##spring boot config 
+
+.env.properties
+
+# Environment variables
+.env
+.env.*
+!.env.example
