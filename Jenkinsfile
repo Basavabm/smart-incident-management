@@ -9,7 +9,7 @@ pipeline {
     }
 
     environment {
-        DOCKERHUB_CREDS   = credentials('dockerhub-creds')        // Username + Password/Token credential
+        DOCKERHUB_CREDS   = credentials('docker')        // Username + Password/Token credential
         DOCKER_NAMESPACE  = 'basavabm'                             // Docker Hub username / org
         BACKEND_IMAGE     = "${DOCKER_NAMESPACE}/sim-backend"
         FRONTEND_IMAGE    = "${DOCKER_NAMESPACE}/sim-frontend"
