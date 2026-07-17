@@ -1,0 +1,7 @@
+target/
+.mvn/
+.idea/
+*.iml
+.env.properties
+.git/
+HELP.md

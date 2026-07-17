@@ -36,7 +36,8 @@ public class SecurityConfig {
                                 "/api/auth/forgot-password/**",
                                 "/api/contact/submit",
                                 "/api/public/**",
-                                "/actuator/**"
+                                "/actuator/health",
+                                "/actuator/prometheus"
                         ).permitAll()
 
                         .anyRequest().authenticated()

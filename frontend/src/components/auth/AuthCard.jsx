@@ -1,3 +1,4 @@
+import authIllustration from "../../assets/auth-illustration.png";
 export default function AuthCard({ title, subtitle, children, footer }) {
   return (
     <div
@@ -13,7 +14,7 @@ export default function AuthCard({ title, subtitle, children, footer }) {
     >
       <h2 className="text-2xl font-bold text-gray-900 text-center">
         <img
-          src="/src/assets/auth-illustration.png"
+          src={authIllustration}
           alt="ServicePulse Logo"
           className="mx-auto mb-2 w-30 h-30"
         />
