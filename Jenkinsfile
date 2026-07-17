@@ -9,16 +9,13 @@ pipeline {
     }
 
     environment {
-        DOCKERHUB_CREDS   = credentials('docker')        // Username + Password/Token credential
-        DOCKER_NAMESPACE  = 'basavabm'                             // Docker Hub username / org
+        DOCKERHUB_CREDS   = credentials('docker')          // Username + Password/Token credential
+        DOCKER_NAMESPACE  = 'basavabm'                       // Docker Hub username / org
         BACKEND_IMAGE     = "${DOCKER_NAMESPACE}/sim-backend"
         FRONTEND_IMAGE    = "${DOCKER_NAMESPACE}/sim-frontend"
         IMAGE_TAG         = "${env.BUILD_NUMBER}"
-        KUBECONFIG_CRED   = credentials('kubeconfig-file')         // Secret file credential (kubeconfig)
         K8S_NAMESPACE     = 'smartims'
         SONAR_PROJECT_KEY = 'smart-incident-management'
-        SLACK_CHANNEL     = '#ci-cd-alerts'
-        EMAIL_RECIPIENTS  = 'basavabm30@gmail.com'
     }
 
     options {
@@ -143,7 +140,7 @@ pipeline {
 
         stage('8. Deploy the Application to Kubernetes') {
             steps {
-                withEnv(["KUBECONFIG=${KUBECONFIG_CRED}"]) {
+                withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG')]) {
                     sh """
                         kubectl apply -f k8s/00-namespace.yaml
                         kubectl apply -f k8s/02-postgres.yaml -n ${K8S_NAMESPACE}
@@ -163,7 +160,7 @@ pipeline {
 
         stage('9. Verify the Deployment') {
             steps {
-                withEnv(["KUBECONFIG=${KUBECONFIG_CRED}"]) {
+                withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG')]) {
                     sh """
                         kubectl rollout status deployment/sim-backend -n ${K8S_NAMESPACE} --timeout=120s
                         kubectl rollout status deployment/sim-frontend -n ${K8S_NAMESPACE} --timeout=120s
@@ -177,39 +174,6 @@ pipeline {
     post {
         always {
             sh 'docker logout || true'
-        }
-
-        success {
-            emailext(
-                subject: "SUCCESS: Build #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
-                body: """Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} succeeded.
-
-Backend image:  ${BACKEND_IMAGE}:${IMAGE_TAG}
-Frontend image: ${FRONTEND_IMAGE}:${IMAGE_TAG}
-
-View console output: ${env.BUILD_URL}console""",
-                to: "${EMAIL_RECIPIENTS}"
-            )
-            slackSend(
-                channel: "${SLACK_CHANNEL}",
-                color: 'good',
-                message: "✅ *${env.JOB_NAME}* build #${env.BUILD_NUMBER} succeeded and deployed to *${K8S_NAMESPACE}*.\n${env.BUILD_URL}"
-            )
-        }
-
-        failure {
-            emailext(
-                subject: "FAILED: Build #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
-                body: """Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} failed.
-
-Check console output: ${env.BUILD_URL}console""",
-                to: "${EMAIL_RECIPIENTS}"
-            )
-            slackSend(
-                channel: "${SLACK_CHANNEL}",
-                color: 'danger',
-                message: "❌ *${env.JOB_NAME}* build #${env.BUILD_NUMBER} failed.\n${env.BUILD_URL}console"
-            )
         }
     }
 }
