@@ -180,5 +180,28 @@ pipeline {
         always {
             sh 'docker logout || true'
         }
+
+        success {
+            emailext(
+                subject: "SUCCESS: Build #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
+                body: """Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} succeeded.
+
+Backend image:  ${BACKEND_IMAGE}:${IMAGE_TAG}
+Frontend image: ${FRONTEND_IMAGE}:${IMAGE_TAG}
+
+View console output: ${env.BUILD_URL}console""",
+                to: "basavabm30@gmail.com"
+            )
+        }
+
+        failure {
+            emailext(
+                subject: "FAILED: Build #${env.BUILD_NUMBER} - ${env.JOB_NAME}",
+                body: """Build #${env.BUILD_NUMBER} of ${env.JOB_NAME} failed.
+
+Check console output: ${env.BUILD_URL}console""",
+                to: "basavabm30@gmail.com"
+            )
+        }
     }
 }
