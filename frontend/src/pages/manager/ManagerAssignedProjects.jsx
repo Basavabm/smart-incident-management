@@ -50,7 +50,7 @@ function getProjectCreatedAt(project) {
   );
 }
 
-function splitMembersByRole(memberDetails, memberNames, userLookup) {
+function splitMembersByRole(memberDetails, memberNames) {
   const engineers = [];
   const users = [];
   const details = Array.isArray(memberDetails) ? memberDetails : [];
@@ -151,7 +151,7 @@ export default function ManagerAssignedProjects() {
   );
 
   const memberSplit = useMemo(
-    () => splitMembersByRole(selectedProject?.memberDetails, selectedProject?.memberNames, userLookup),
+    () => splitMembersByRole(selectedProject?.memberDetails, selectedProject?.memberNames),
     [selectedProject?.memberDetails, selectedProject?.memberNames, userLookup]
   );
 
@@ -331,7 +331,7 @@ export default function ManagerAssignedProjects() {
               </tr>
             ) : (
               filteredProjects.map((project) => {
-                const split = splitMembersByRole(project.memberDetails, project.memberNames, userLookup);
+                const split = splitMembersByRole(project.memberDetails, project.memberNames);
                 return (
                   <tr key={project.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3">

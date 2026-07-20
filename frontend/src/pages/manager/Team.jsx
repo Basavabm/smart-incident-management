@@ -20,7 +20,7 @@ function unwrapArrayData(res) {
   return [];
 }
 
-function splitMembersByRole(memberDetails, memberNames, userLookup) {
+function splitMembersByRole(memberDetails, memberNames) {
   const engineers = [];
   const users = [];
   const details = Array.isArray(memberDetails) ? memberDetails : [];
@@ -47,7 +47,7 @@ function splitMembersByRole(memberDetails, memberNames, userLookup) {
   };
 }
 
-function resolveDisplayName(value, lookup) {
+function resolveDisplayName(value) {
   const raw = String(value || "").trim();
   if (!raw) return "-";
   return raw;
@@ -106,10 +106,10 @@ export default function Team() {
   const normalizedProjects = useMemo(
     () =>
       projects.map((project) => {
-        const split = splitMembersByRole(project?.memberDetails, project?.memberNames, userLookup);
+        const split = splitMembersByRole(project?.memberDetails, project?.memberNames);
         return {
           ...project,
-          managerDisplayName: resolveDisplayName(project?.managerName, userLookup),
+          managerDisplayName: resolveDisplayName(project?.managerName),
           engineers: split.engineers,
           projectUsers: split.users
         };
