@@ -20,6 +20,7 @@ pipeline {
         SONAR_PROJECT_KEY = 'smart-incident-management'
         JAVA_HOME         = '/usr/lib/jvm/java-21-openjdk-amd64'
         PATH              = "${JAVA_HOME}/bin:${env.PATH}"
+        VITE_API_URL      = 'http://35.200.195.146:8081'
     }
 
     options {
@@ -114,7 +115,7 @@ pipeline {
                 stage('Frontend Image') {
                     steps {
                         dir('frontend') {
-                            sh "docker build --build-arg VITE_API_URL=${VITE_API_URL ?: 'http://35.200.195.146:8081'} -t ${FRONTEND_IMAGE}:${IMAGE_TAG} ."
+                            sh "docker build --build-arg VITE_API_URL=${VITE_API_URL} -t ${FRONTEND_IMAGE}:${IMAGE_TAG} ."
                         }
                     }
                 }
