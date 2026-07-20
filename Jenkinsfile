@@ -3,9 +3,11 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven3'      // Name must match: Manage Jenkins -> Tools -> Maven installations
-        jdk    'jdk21'      // Name must match: Manage Jenkins -> Tools -> JDK installations
+        maven  'maven3'     // Name must match: Manage Jenkins -> Tools -> Maven installations
         nodejs 'node20'     // Name must match: Manage Jenkins -> Tools -> NodeJS installations
+        // JDK intentionally NOT declared here — Jenkins' JDK auto-installer is broken
+        // (Oracle OTN links are dead). We use the JDK 21 already installed on this VM instead,
+        // set directly via JAVA_HOME below.
     }
 
     environment {
@@ -16,6 +18,8 @@ pipeline {
         IMAGE_TAG         = "${env.BUILD_NUMBER}"
         K8S_NAMESPACE     = 'smartims'
         SONAR_PROJECT_KEY = 'smart-incident-management'
+        JAVA_HOME         = '/usr/lib/jvm/java-21-openjdk-amd64'
+        PATH              = "${JAVA_HOME}/bin:${env.PATH}"
     }
 
     options {
